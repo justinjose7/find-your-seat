@@ -1,4 +1,4 @@
-const CACHE = 'find-your-seat-632f979d0f';
+const CACHE = 'find-your-seat-332046a375';
 const PAGE = new URL('./', self.location).href;
 self.addEventListener('install', e => {
   e.waitUntil(caches.open(CACHE).then(c => c.add(new Request(PAGE, {cache: 'reload'})).catch(() => {})).then(() => self.skipWaiting()));
