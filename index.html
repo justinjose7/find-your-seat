@@ -32,7 +32,7 @@ body.ink{background:var(--ink)}
 .display{font-family:var(--display);font-weight:400}
 
 /* 1 · welcome */
-#s1{padding-top:0}
+#s1{padding-top:0;background:var(--cream)}
 .band{background:var(--ink);color:var(--cream);padding:calc(16px + env(safe-area-inset-top)) 26px 30px;display:flex;flex-direction:column}
 .hdr{padding-top:26px;display:flex;flex-direction:column;gap:6px;align-items:center;text-align:center}
 .hdr .eyebrow{color:var(--gold-light-2)}
@@ -143,7 +143,7 @@ svg text.lbl{font-family:var(--ui);font-size:22px;letter-spacing:.18em;text-tran
 
 </style>
 </head>
-<body>
+<body class="ink">
 <div class="app">
 
 <section class="screen on" id="s1">
@@ -269,7 +269,7 @@ function show(id) {
   document.querySelectorAll('.screen').forEach(s => s.classList.toggle('on', s.id === id));
   current = id; window.scrollTo(0, 0);
   const ink = !!INK_TOP[id];
-  document.body.classList.toggle('ink', id === 's3');
+  document.body.classList.toggle('ink', ink);
   const meta = document.querySelector('meta[name="theme-color"]'); if (meta) meta.setAttribute('content', ink ? '#2F2E5C' : '#FBF7F1');
 }
 const tnum = t => t === 'S' ? '♥' : String(t);
