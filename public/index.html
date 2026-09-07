@@ -144,10 +144,8 @@ svg text.lbl{font-family:var(--ui);font-size:22px;letter-spacing:.18em;text-tran
 .prompt{margin:26px 28px 0;background:var(--sand);border-radius:20px;padding:16px 18px;display:flex;align-items:center;gap:14px;text-align:left;width:calc(100% - 56px)}
 .prompt:active{background:var(--sand-deep)}
 .prompt .ico{width:44px;height:44px;border-radius:14px;background:var(--sand-deep);display:flex;align-items:center;justify-content:center;flex:none;color:var(--gold)}
-.prompt .t1{font-size:16px;color:var(--ink)}
-.prompt .t2{font-size:14px;color:var(--gold);margin-top:2px}
-.pill.share{background:var(--gold);color:var(--cream);margin-top:12px;box-shadow:none}
-.pill.share:active{background:#9a7540}
+.prompt .t1{font-size:18px;color:var(--ink)}
+.prompt .t2{font-size:16px;color:var(--gold-dark);margin-top:2px}
 .toast{position:fixed;left:50%;bottom:calc(18px + env(safe-area-inset-bottom));transform:translateX(-50%) translateY(20px);max-width:calc(100% - 40px);background:var(--ink);color:var(--cream);border-radius:999px;padding:12px 20px;font-size:14px;box-shadow:0 10px 30px rgba(47,46,92,.3);opacity:0;pointer-events:none;transition:.25s ease-out;z-index:9;white-space:nowrap}
 .toast.on{opacity:1;pointer-events:auto;transform:translateX(-50%)}
 #s3 .toast{background:var(--cream);color:var(--ink)}
@@ -302,7 +300,7 @@ svg text.lbl{font-family:var(--ui);font-size:22px;letter-spacing:.18em;text-tran
     <button class="pill" id="room" type="button">See the room map</button>
     <button class="ghost" id="mates" type="button">Who's at my table</button>
     
-    <button class="pill share" id="share3" type="button">Share a photo</button>
+    <button class="ghost" id="share3" type="button">Share a photo</button>
 
   </div>
 </section>
@@ -610,7 +608,7 @@ $('#sheet .panel').addEventListener('touchend', e => { if (ty != null && e.chang
 
 // ---------- photos (screen 4) ----------
 const KEY_TOKEN = 'sf-couple', KEY_ARRIVED = 'sf-arrived', MAX_MB = 15, MAX_FILES = 30;
-const TS_KEY = '1x00000000000000000000AA';   // Cloudflare Turnstile site key (public)
+const TS_KEY = '0x4AAAAAAEqzZpQdVCQ7Lno0';   // Cloudflare Turnstile site key (public)
 const PS = $('#psheet');
 let pfiles = [];   // {file, url, thumb, sel}
 let up = null;     // {id, items:[{file,thumb,url,n,status,pct,err}], finished}
