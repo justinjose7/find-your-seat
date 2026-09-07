@@ -84,12 +84,10 @@ button{font:inherit;color:inherit;background:none;border:0;cursor:pointer;-webki
 .num{font-family:var(--display);font-size:clamp(150px,53vw,180px);line-height:1.16;font-variant-numeric:lining-nums;font-feature-settings:'lnum' 1;margin-top:8px;color:var(--cream);transform:scale(.94);opacity:0;transition:transform .22s ease-out,opacity .22s ease-out}
 .num.s{font-size:clamp(44px,15vw,56px);font-style:italic;line-height:1.2;margin:22px 0 10px}
 .on .num{transform:scale(1);opacity:1}
-.hero .div{width:40px;height:1px;background:rgba(251,247,241,.3);margin:24px 0}
-.hero .dir{font-size:16px;line-height:1.6;color:rgba(251,247,241,.82);max-width:300px}
-.bar{background:var(--cream);color:var(--ink);padding:22px 24px 26px;display:flex;flex-direction:column;gap:12px}
-.bar .btns{display:flex;gap:12px}
-.btn2{flex:1;height:52px;border:1px solid var(--hair-4);border-radius:16px;display:flex;align-items:center;justify-content:center;font-size:16px;color:var(--ink)}
-.btn2:active{background:var(--sand)}
+.hero .div{width:40px;height:1px;background:rgba(251,247,241,.3);margin:24px 0 30px}
+.pill{height:58px;padding:0 36px;background:var(--gold-light);color:var(--ink);border-radius:999px;font-size:19px;letter-spacing:.01em;display:flex;align-items:center;justify-content:center;box-shadow:0 8px 24px rgba(0,0,0,.18)}
+.pill:active{background:var(--gold)}
+.saved{padding:0 24px calc(26px + env(safe-area-inset-bottom));font-size:14px;color:rgba(251,247,241,.55);text-align:center}
 @media (max-height:520px){.num{font-size:clamp(90px,26vh,150px)}.hero .div{margin:12px 0}}
 @media (max-width:339px){.hdr .names{font-size:34px}.lead h1{font-size:28px}.lead p,.best .sub{font-size:14px}.field input{font-size:16px}}
 
@@ -156,12 +154,9 @@ svg text.lbl{font-family:var(--ui);font-size:22px;letter-spacing:.18em;text-tran
     <div class="eyebrow" id="eyebrow">You're seated at table</div>
     <div class="num" id="num">7</div>
     <div class="div"></div>
-    <div class="dir" id="dir"></div>
+    <button class="pill" id="room" type="button">See the room map</button>
   </div>
-  <div class="bar">
-    <div class="btns"><button class="btn2" id="room" type="button">See the room</button></div>
-    <div class="help">Saved to this phone — works even without signal</div>
-  </div>
+  <div class="saved">Saved to this phone — works even without signal</div>
 </section>
 
 </div>
@@ -293,7 +288,6 @@ function pick(g, silent) {
   num.className = 'num' + (g.t === 'S' ? ' s' : '');
   num.textContent = g.t === 'S' ? 'Sweetheart table' : String(g.t);
   $('#eyebrow').textContent = g.t === 'S' ? "You're seated at the" : "You're seated at table";
-  $('#dir').textContent = tb.long;
   document.activeElement && document.activeElement.blur();
   show('s3');
   if (!silent) {
