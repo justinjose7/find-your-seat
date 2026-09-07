@@ -196,25 +196,38 @@ svg text.lbl{font-family:var(--ui);font-size:22px;letter-spacing:.18em;text-tran
 .selbar .b[disabled]{opacity:.45}
 
 /* 6 · photo detail */
-.viewer{position:fixed;inset:0;background:#151530;color:var(--cream);display:none;flex-direction:column;z-index:12;padding-top:env(safe-area-inset-top)}
+.viewer{position:fixed;inset:0;background:#151530;color:var(--cream);display:none;flex-direction:column;z-index:12;padding-top:env(safe-area-inset-top);opacity:0;transition:opacity .22s ease-out}
 .viewer.on{display:flex}
+.viewer.in{opacity:1}
 .viewer .nav{padding:16px 20px 0;display:flex;justify-content:space-between;align-items:center;flex:none}
 .viewer .back{font-size:15px;color:var(--gold-light);padding:8px 8px 8px 0;min-height:44px;display:flex;align-items:center}
 .viewer .pos{font-size:15px;opacity:.6}
-.viewer .ph{flex:1;min-height:0;display:flex;align-items:center;justify-content:center;padding:14px 0;touch-action:pan-y}
+.viewer .ph{flex:1;min-height:0;display:flex;align-items:center;justify-content:center;padding:14px 0;touch-action:pan-y;position:relative;transform:scale(.96);transition:transform .22s ease-out}
+.viewer.in .ph{transform:none}
 .viewer .ph img,.viewer .ph video{width:100%;height:100%;object-fit:contain;display:block}
-.viewer .strip{padding:0 20px;display:flex;gap:3px;justify-content:center;flex:none;height:34px}
-.viewer .strip div{width:26px;height:34px;opacity:.45;background:var(--sand-deep) center/cover no-repeat}
-.viewer .strip div.cur{width:34px;opacity:1;border:2px solid var(--gold-light);box-sizing:border-box}
-.viewer .card{margin-top:14px;flex:none;background:var(--cream);color:var(--ink);padding:18px 22px calc(22px + env(safe-area-inset-bottom));display:flex;flex-direction:column;gap:11px}
-.viewer .who{display:flex;align-items:center;gap:12px}
-.viewer .av{width:42px;height:42px;border-radius:50%;background:var(--sand-deep);flex:none;display:flex;align-items:center;justify-content:center;font-family:var(--display);font-size:19px;color:var(--ink)}
-.viewer .nm{font-size:16px;color:var(--ink);line-height:1.35}
-.viewer .meta{font-size:14px;color:var(--muted-light);line-height:1.35}
-.viewer .note{font-family:var(--display);font-style:italic;font-size:21px;line-height:1.35;color:var(--ink)}
-.viewer .acts{display:flex;gap:10px;padding-top:2px}
-.viewer .save{flex:1;height:46px;border-radius:14px;background:var(--ink);color:var(--cream);display:flex;align-items:center;justify-content:center;font-size:15px;text-decoration:none}
-.viewer .fav{width:46px;height:46px;border-radius:14px;border:1px solid var(--hair-4);font-size:16px;color:var(--gold);display:flex;align-items:center;justify-content:center}
+.viewer .ph img.base{position:absolute;inset:14px 0;height:calc(100% - 28px);filter:blur(12px);transform:scale(1.02);transition:opacity .25s}
+.viewer .ph img.main{position:relative;opacity:0;transition:opacity .25s}
+.viewer .ph img.main.ok{opacity:1}
+.viewer .ph img.main.ok + img.base{opacity:0}
+.viewer .strip{padding:0 20px 12px;display:flex;gap:3px;flex:none;height:42px;overflow-x:auto;scrollbar-width:none;-webkit-overflow-scrolling:touch}
+.viewer .strip::-webkit-scrollbar{display:none}
+.viewer .strip button{width:24px;height:30px;flex:none;opacity:.45;background:var(--sand-deep) center/cover no-repeat;padding:0;border-radius:0}
+.viewer .strip button:nth-child(4n+2){background-color:#E7E1D6}.viewer .strip button:nth-child(4n+3){background-color:#DCD3C2}.viewer .strip button:nth-child(4n){background-color:var(--canvas)}
+.viewer .strip button.cur{width:30px;opacity:1;border:2px solid var(--gold-light);box-sizing:border-box}
+.viewer .strip .pad{flex:none;width:calc(50% - 35px)}
+.viewer .card{flex:none;background:var(--cream);color:var(--ink);padding:14px 20px calc(20px + env(safe-area-inset-bottom));display:flex;flex-direction:column;gap:9px}
+.viewer .who{display:flex;align-items:center;gap:11px}
+.viewer .av{width:36px;height:36px;border-radius:50%;background:var(--sand-deep);flex:none;display:flex;align-items:center;justify-content:center;font-family:var(--display);font-size:16px;color:var(--ink)}
+.viewer .tx{flex:1;min-width:0;line-height:1.3}
+.viewer .nm{font-size:15px;color:var(--ink);overflow:hidden;text-overflow:ellipsis;white-space:nowrap}
+.viewer .meta{font-size:13px;color:var(--muted-light)}
+.viewer .ib{width:38px;height:38px;border-radius:12px;flex:none;display:flex;align-items:center;justify-content:center;font-size:15px;position:relative;text-decoration:none}
+.viewer .ib::before{content:'';position:absolute;inset:-4px}
+.viewer .fav{border:1px solid var(--hair-4);color:var(--gold)}
+.viewer .save{background:var(--ink);color:var(--cream)}
+.viewer .note{font-family:var(--display);font-style:italic;font-size:18px;line-height:1.3;color:var(--ink);display:-webkit-box;-webkit-box-orient:vertical;-webkit-line-clamp:3;overflow:hidden;text-align:left;padding:0}
+.viewer .note.open{-webkit-line-clamp:unset;display:block}
+@media (max-height:600px){.viewer .note{-webkit-line-clamp:2}}
 
 </style>
 </head>
@@ -327,11 +340,15 @@ svg text.lbl{font-family:var(--ui);font-size:22px;letter-spacing:.18em;text-tran
 <div class="viewer" id="s6" aria-hidden="true">
   <div class="nav"><button class="back" id="vBack" type="button">‹ Photos</button><div class="pos" id="vPos"></div></div>
   <div class="ph" id="vPh"></div>
-  <div class="strip" id="vStrip"></div>
+  <div class="strip" id="vStrip" aria-label="Other photos"></div>
   <div class="card">
-    <div class="who"><div class="av" id="vAv"></div><div><div class="nm" id="vNm"></div><div class="meta" id="vMeta"></div></div></div>
-    <div class="note" id="vNote" hidden></div>
-    <div class="acts"><a class="save" id="vSave" href="#" download>Save to camera roll</a><button class="fav" id="vFav" type="button" aria-label="Favourite">♡</button></div>
+    <div class="who">
+      <div class="av" id="vAv" aria-hidden="true"></div>
+      <div class="tx"><div class="nm" id="vNm"></div><div class="meta" id="vMeta"></div></div>
+      <button class="ib fav" id="vFav" type="button" aria-label="Favorite" aria-pressed="false">♡</button>
+      <a class="ib save" id="vSave" href="#" download aria-label="Save to camera roll">↓</a>
+    </div>
+    <button class="note" id="vNote" type="button" hidden aria-label="Note from the sender, tap to expand"></button>
   </div>
 </div>
 <div class="selbar" id="selbar" hidden><button class="b" id="selCancel" type="button">Cancel</button><button class="b del" id="selDel" type="button" disabled>Delete</button></div>
@@ -820,38 +837,69 @@ function onArrive(g) {
 
   // ----- viewer (screen 6) -----
   const V = $('#s6');
-  function openViewer(i) { cur = i; renderViewer(); V.classList.add('on'); V.setAttribute('aria-hidden', 'false'); document.body.style.overflow = 'hidden'; }
-  function closeViewer() { V.classList.remove('on'); V.setAttribute('aria-hidden', 'true'); document.body.style.overflow = ''; $('#vPh').innerHTML = ''; }
+  let vOpen = false;
+  function openViewer(i) {
+    cur = i; vOpen = true;
+    try { history.pushState({viewer: true}, '', location.href); } catch (e) {}
+    V.classList.add('on'); V.setAttribute('aria-hidden', 'false'); document.body.style.overflow = 'hidden';
+    buildStrip(); renderViewer();
+    requestAnimationFrame(() => requestAnimationFrame(() => V.classList.add('in')));
+  }
+  function closeViewer(fromPop) {
+    if (!vOpen) return; vOpen = false;
+    V.classList.remove('in', 'on'); V.setAttribute('aria-hidden', 'true'); document.body.style.overflow = ''; $('#vPh').innerHTML = '';
+    if (!fromPop && history.state && history.state.viewer) { try { history.back(); } catch (e) {} }
+  }
+  window.addEventListener('popstate', () => { if (vOpen) closeViewer(true); });
+  function buildStrip() {   // all thumbs, scrollable, kept centred on the active one
+    const st = $('#vStrip'); st.innerHTML = '';
+    const pad = () => { const d = document.createElement('div'); d.className = 'pad'; return d; };
+    st.appendChild(pad());
+    list.forEach((p, k) => {
+      const b = document.createElement('button'); b.type = 'button'; b.setAttribute('aria-label', 'Photo ' + (k + 1));
+      if (p.thumb) b.style.backgroundImage = 'url(' + fileUrl('thumb', p) + ')';
+      b.onclick = () => { cur = k; renderViewer(); };
+      st.appendChild(b);
+    });
+    st.appendChild(pad());
+  }
   function renderViewer() {
     const p = list[cur]; if (!p) return closeViewer();
     $('#vPos').textContent = (cur + 1) + ' of ' + list.length;
     const ph = $('#vPh'); ph.innerHTML = '';
     if (p.video) { const v = document.createElement('video'); v.controls = true; v.playsInline = true; v.preload = 'metadata'; v.src = fileUrl('photo', p); ph.appendChild(v); }
-    else { const im = document.createElement('img'); im.alt = 'Photo from ' + p.name; im.src = fileUrl(p.display ? 'display' : 'photo', p); ph.appendChild(im); }
-    const st = $('#vStrip'); st.innerHTML = '';
-    for (let k = cur - 2; k <= cur + 2; k++) {
-      const d = document.createElement('div'); if (k === cur) d.className = 'cur';
-      const pp = list[k]; if (pp && pp.thumb) d.style.backgroundImage = 'url(' + fileUrl('thumb', pp) + ')'; else if (!pp) d.style.visibility = 'hidden';
-      d.onclick = () => { if (pp) { cur = k; renderViewer(); } };
-      st.appendChild(d);
+    else {
+      const im = document.createElement('img'); im.className = 'main'; im.alt = 'Photo from ' + p.name; im.decoding = 'async';
+      im.onload = () => im.classList.add('ok'); im.src = fileUrl(p.display ? 'display' : 'photo', p);
+      ph.appendChild(im);
+      if (p.thumb) { const base = document.createElement('img'); base.className = 'base'; base.alt = ''; base.src = fileUrl('thumb', p); ph.appendChild(base); }
+      if (im.complete && im.naturalWidth) im.classList.add('ok');
     }
+    const st = $('#vStrip'), btns = st.querySelectorAll('button');
+    btns.forEach((b, k) => b.classList.toggle('cur', k === cur));
+    const c = btns[cur]; if (c) { const left = c.offsetLeft - st.clientWidth / 2 + c.offsetWidth / 2; try { st.scrollTo({left, behavior: V.classList.contains('in') ? 'smooth' : 'auto'}); } catch (e) { st.scrollLeft = left; } }
     $('#vAv').textContent = initials(p.name);
     $('#vNm').textContent = p.name;
     $('#vMeta').textContent = [tlabel(p.t), 'sent ' + clock(p.at)].filter(Boolean).join(' · ');
-    const n = $('#vNote'); n.hidden = !p.note; n.textContent = p.note ? '“' + p.note + '”' : '';
+    const n = $('#vNote'); n.hidden = !p.note; n.classList.remove('open'); n.textContent = p.note ? '“' + p.note + '”' : '';
     const a = $('#vSave'); a.href = fileUrl('photo', p) + '&dl=1'; a.download = p.fname || 'photo';
-    $('#vFav').textContent = (LS.get(KEY_FAV) || []).includes(p.key) ? '♥' : '♡';
+    setFav((LS.get(KEY_FAV) || []).includes(p.key));
     [list[cur + 1], list[cur - 1]].forEach(pp => { if (pp && !pp.video) { const im = new Image(); im.src = fileUrl(pp.display ? 'display' : 'photo', pp); } });
   }
-  $('#vBack').onclick = closeViewer;
-  $('#vFav').onclick = () => { const p = list[cur]; if (!p) return; let f = LS.get(KEY_FAV) || []; f = f.includes(p.key) ? f.filter(k => k !== p.key) : f.concat([p.key]); LS.set(KEY_FAV, f); $('#vFav').textContent = f.includes(p.key) ? '♥' : '♡'; };
+  function setFav(on) { const f = $('#vFav'); f.textContent = on ? '♥' : '♡'; f.setAttribute('aria-pressed', String(on)); }
+  $('#vBack').onclick = () => closeViewer();
+  $('#vNote').onclick = e => e.currentTarget.classList.toggle('open');
+  $('#vFav').onclick = () => { const p = list[cur]; if (!p) return; let f = LS.get(KEY_FAV) || []; const on = !f.includes(p.key); f = on ? f.concat([p.key]) : f.filter(k => k !== p.key); LS.set(KEY_FAV, f); setFav(on); };
   let sx = null, sy = null;
   $('#vPh').addEventListener('touchstart', e => { sx = e.touches[0].clientX; sy = e.touches[0].clientY; }, {passive: true});
   $('#vPh').addEventListener('touchend', e => {
     if (sx == null) return; const dx = e.changedTouches[0].clientX - sx, dy = e.changedTouches[0].clientY - sy; sx = sy = null;
     if (Math.abs(dx) > 50 && Math.abs(dx) > Math.abs(dy)) { const k = cur + (dx < 0 ? 1 : -1); if (list[k]) { cur = k; renderViewer(); } }
+    else if (dy > 90 && Math.abs(dy) > Math.abs(dx) * 1.5) closeViewer();
   }, {passive: true});
-  document.addEventListener('keydown', e => { if (!V.classList.contains('on')) return; if (e.key === 'Escape') closeViewer(); if (e.key === 'ArrowRight' && list[cur + 1]) { cur++; renderViewer(); } if (e.key === 'ArrowLeft' && list[cur - 1]) { cur--; renderViewer(); } });
+  document.addEventListener('keydown', e => { if (!vOpen) return; if (e.key === 'Escape') closeViewer(); if (e.key === 'ArrowRight' && list[cur + 1]) { cur++; renderViewer(); } if (e.key === 'ArrowLeft' && list[cur - 1]) { cur--; renderViewer(); } });
+  const _renderGrid = renderGrid;
+  renderGrid = function () { _renderGrid(); if (vOpen) { buildStrip(); if (!list[cur]) closeViewer(); else renderViewer(); } };
 
   show('s5'); load();
   setInterval(() => { if (!document.hidden && !selecting) load(); }, 30000);
