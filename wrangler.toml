@@ -1,8 +1,8 @@
 # Cloudflare Pages config for the Find Your Seat site (photo-sharing branch).
-# Deploy a preview:  npx wrangler pages deploy . --project-name find-your-seat --branch photos
+# Deploy a preview:  npx wrangler pages deploy --project-name find-your-seat --branch photos
 # Local dev:         npx wrangler pages dev .   (bindings below are simulated locally)
 name = "find-your-seat"
-pages_build_output_dir = "."
+pages_build_output_dir = "public"
 compatibility_date = "2026-09-07"
 
 # Photos are stored in R2 when the PHOTOS bucket is bound; otherwise the worker
@@ -13,7 +13,7 @@ compatibility_date = "2026-09-07"
 
 [[kv_namespaces]]
 binding = "PHOTOS_KV"
-id = "REPLACE_WITH_KV_NAMESPACE_ID"
+id = "b9b29aeb7eea4d22bb62631a845be15e"
 
 [vars]
 # SHA-256 hex of the couple's private token (the token itself is never stored here).
