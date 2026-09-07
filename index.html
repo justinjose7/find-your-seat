@@ -25,7 +25,14 @@ button{font:inherit;color:inherit;background:none;border:0;cursor:pointer;-webki
 .app{position:relative;flex:1;display:flex;flex-direction:column;width:100%;margin:0 auto;min-height:100dvh}
 @media (min-width:481px){.app,.sheet .panel{max-width:420px}}
 body.ink,body.ink1{background:var(--ink)}
-@media (min-width:481px){body.ink1{background:var(--cream)}}   /* wide screens: the ink body only matters for Safari's bars on phones */
+/* wide screens: the column is capped at 420px, the body stays cream (the ink body only matters for Safari's bars on
+   phones), and the header band paints edge to edge behind the column */
+@media (min-width:481px){
+  body.ink1{background:var(--cream)}
+  html{overflow-x:clip}
+  .band{position:relative;isolation:isolate}
+  .band::before{content:'';position:absolute;top:0;bottom:0;left:-50vw;right:-50vw;background:var(--ink);z-index:-1}
+}
 .screen{position:absolute;inset:0;display:flex;flex-direction:column;opacity:0;pointer-events:none;transition:opacity .22s ease-out;padding-top:env(safe-area-inset-top);padding-bottom:env(safe-area-inset-bottom)}
 .screen.on{opacity:1;pointer-events:auto;position:relative;flex:1}
 .eyebrow{font-size:13px;letter-spacing:.24em;text-transform:uppercase;color:var(--gold-dark)}
