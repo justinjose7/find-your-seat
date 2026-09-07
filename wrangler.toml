@@ -25,6 +25,7 @@ ADMIN_TOKEN_SHA256 = "af5001aa61cc4e5ed59eee4f6156f73f49ac2d1fa1f894b19b1fba7769
 #   npx wrangler pages secret put TURNSTILE_SECRET --project-name find-your-seat
 [env.preview.vars]
 TURNSTILE_SECRET = "1x0000000000000000000000000000000AA"
+ADMIN_TOKEN_SHA256 = "af5001aa61cc4e5ed59eee4f6156f73f49ac2d1fa1f894b19b1fba7769101d23"
 
 # Environment sections don't inherit bindings, so the preview needs its own copy.
 [[env.preview.kv_namespaces]]
