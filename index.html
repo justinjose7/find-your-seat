@@ -3,7 +3,7 @@
 <head>
 <meta charset="utf-8">
 <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
-<meta name="theme-color" content="#FBF7F1">
+<meta name="theme-color" content="#2F2E5C">
 <meta name="color-scheme" content="light">
 <title>Find your seat · Mathews &amp; Swaroopa</title>
 <link rel="preconnect" href="https://fonts.googleapis.com">
@@ -22,7 +22,9 @@
 html{height:100%;-webkit-text-size-adjust:100%}
 body{min-height:100%;min-height:100dvh;background:var(--cream);color:var(--ink);font-family:var(--ui);font-weight:400;-webkit-font-smoothing:antialiased;display:flex;flex-direction:column}
 button{font:inherit;color:inherit;background:none;border:0;cursor:pointer;-webkit-tap-highlight-color:transparent}
-.app{position:relative;flex:1;display:flex;flex-direction:column;width:100%;max-width:420px;margin:0 auto;min-height:100dvh}
+.app{position:relative;flex:1;display:flex;flex-direction:column;width:100%;margin:0 auto;min-height:100dvh}
+@media (min-width:481px){.app,.sheet .panel{max-width:420px}}
+body.ink{background:var(--ink)}
 .screen{position:absolute;inset:0;display:flex;flex-direction:column;opacity:0;pointer-events:none;transition:opacity .22s ease-out;padding-top:env(safe-area-inset-top);padding-bottom:env(safe-area-inset-bottom)}
 .screen.on{opacity:1;pointer-events:auto;position:relative;flex:1}
 .eyebrow{font-size:13px;letter-spacing:.24em;text-transform:uppercase;color:var(--gold-dark)}
@@ -120,7 +122,7 @@ button{font:inherit;color:inherit;background:none;border:0;cursor:pointer;-webki
 /* room map sheet */
 .sheet{position:fixed;inset:0;background:rgba(47,46,92,.55);display:flex;align-items:flex-end;justify-content:center;opacity:0;pointer-events:none;transition:opacity .28s ease-out;z-index:10}
 .sheet.on{opacity:1;pointer-events:auto}
-.sheet .panel{width:100%;max-width:420px;max-height:92dvh;background:var(--cream);border-radius:32px 32px 0 0;padding:14px 22px calc(22px + env(safe-area-inset-bottom));display:flex;flex-direction:column;gap:14px;transform:translateY(24px);transition:transform .28s ease-out;overflow:hidden}
+.sheet .panel{width:100%;max-height:92dvh;background:var(--cream);border-radius:32px 32px 0 0;padding:14px 22px calc(22px + env(safe-area-inset-bottom));display:flex;flex-direction:column;gap:14px;transform:translateY(24px);transition:transform .28s ease-out;overflow:hidden}
 .sheet.on .panel{transform:none}
 .sheet .handle{width:42px;height:4px;border-radius:2px;background:var(--hair-3);align-self:center}
 .sheet h2{font-family:var(--display);font-weight:400;font-size:30px;line-height:1.15;color:var(--ink)}
@@ -262,9 +264,13 @@ function search(raw) {
 
 // ---------- screens ----------
 let current = 's1', matches = [], selected = null;
+const INK_TOP = {s1: true, s3: true};
 function show(id) {
   document.querySelectorAll('.screen').forEach(s => s.classList.toggle('on', s.id === id));
   current = id; window.scrollTo(0, 0);
+  const ink = !!INK_TOP[id];
+  document.body.classList.toggle('ink', id === 's3');
+  const meta = document.querySelector('meta[name="theme-color"]'); if (meta) meta.setAttribute('content', ink ? '#2F2E5C' : '#FBF7F1');
 }
 const tnum = t => t === 'S' ? '♥' : String(t);
 const tname = t => t === 'S' ? 'The sweetheart table' : 'Table ' + words(+t);

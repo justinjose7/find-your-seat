@@ -1,4 +1,4 @@
-const CACHE = 'find-your-seat-332046a375';
+const CACHE = 'find-your-seat-7a92288ee5';
 const PAGE = new URL('./', self.location).href;
 self.addEventListener('install', e => {
   e.waitUntil(caches.open(CACHE).then(c => c.add(new Request(PAGE, {cache: 'reload'})).catch(() => {})).then(() => self.skipWaiting()));
@@ -9,6 +9,7 @@ self.addEventListener('activate', e => {
 self.addEventListener('fetch', e => {
   const req = e.request;
   if (req.method !== 'GET') return;
+  if (new URL(req.url).pathname.startsWith('/api/')) return;   // live data and photos: never cached
   const url = new URL(req.url);
   const isPage = req.mode === 'navigate' || (url.origin === self.location.origin && (url.pathname === new URL(PAGE).pathname || url.pathname.endsWith('/index.html')));
   const isFont = url.hostname === 'fonts.googleapis.com' || url.hostname === 'fonts.gstatic.com';
