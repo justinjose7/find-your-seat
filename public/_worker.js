@@ -13,7 +13,8 @@
 // guest, and /api/* is the only path routed to this worker (_routes.json).
 //   batch/<id>                 JSON {id,i,name,t,note,count,at}   — one "send"
 //   photo/<batchId>/<n>        original file  (meta: ct,size,name,at)
-//   thumb/<batchId>/<n>        small JPEG made on the guest's phone (optional)
+//   thumb/<batchId>/<n>        ~300px  WebP/JPEG made on the guest's phone (grid + strip)
+//   display/<batchId>/<n>      ~1600px WebP/JPEG made on the guest's phone (viewer)
 
 const MAX_BYTES = 15 * 1024 * 1024;            // per file (KV allows 25 MiB)
 const MAX_GUEST_INDEX = 600;                   // guest list is ~500 rows; bounds arrival writes
@@ -176,11 +177,15 @@ async function api(request, env, ctx, url) {
     if (!(TYPE_OK.test(ct) || (!ct && EXT_OK.test(name)))) return json({ error: 'Only photos and short videos, please.' }, 415);
     const at = Date.now();
     await store.put(`photo/${id}/${n}`, await file.arrayBuffer(), { ct: ct || 'application/octet-stream', size: file.size, name, at, kind: 'photo' });
-    const thumb = form.get('thumb');
-    if (thumb && typeof thumb === 'object' && 'arrayBuffer' in thumb && thumb.size > 0 && thumb.size < 512 * 1024) {
-      await store.put(`thumb/${id}/${n}`, await thumb.arrayBuffer(), { ct: 'image/jpeg', size: thumb.size, at, kind: 'thumb' });
+    const variants = [];
+    for (const [kind, max] of [['thumb', 256 * 1024], ['display', 1536 * 1024]]) {
+      const v = form.get(kind);
+      if (v && typeof v === 'object' && 'arrayBuffer' in v && v.size > 0 && v.size <= max && /^image\/(webp|jpeg|avif)$/.test(v.type || '')) {
+        await store.put(`${kind}/${id}/${n}`, await v.arrayBuffer(), { ct: v.type, size: v.size, at, kind });
+        variants.push(kind);
+      }
     }
-    return json({ ok: true, key: `photo/${id}/${n}` });
+    return json({ ok: true, key: `photo/${id}/${n}`, variants });
   }
 
   // ----- couple's side (token required) -----
@@ -191,7 +196,7 @@ async function api(request, env, ctx, url) {
 
     if (p[1] === 'file' && m === 'GET') {
       const kind = p[2], id = p[3] || '', n = parseInt(p[4], 10);
-      if (!/^(photo|thumb)$/.test(kind) || !ID_RE.test(id) || !(n >= 0)) return json({ error: 'bad key' }, 400);
+      if (!/^(photo|thumb|display)$/.test(kind) || !ID_RE.test(id) || !(n >= 0)) return json({ error: 'bad key' }, 400);
       const o = await store.get(`${kind}/${id}/${n}`);
       if (!o) return json({ error: 'gone' }, 404);
       const fname = (o.meta.name || `${id}-${n}`).replace(/["\\\r\n]/g, '_');
@@ -207,25 +212,36 @@ async function api(request, env, ctx, url) {
 
     if (p[1] === 'download.zip' && m === 'GET') return zipAll(store, ctx);
 
+    // Delete whole sends ({id}) or individual photos ({items:[{id,n}]}).
     if (p[1] === 'delete' && m === 'POST') {
       const b = await readJson(request);
-      if (!ID_RE.test(b.id || '')) return json({ error: 'bad id' }, 400);
-      const keys = [...(await store.list(`photo/${b.id}/`)), ...(await store.list(`thumb/${b.id}/`))].map((k) => k.key);
-      await Promise.all([...keys, 'batch/' + b.id].map((k) => store.del(k)));
-      return json({ ok: true, removed: keys.length });
+      const keys = new Set();
+      if (ID_RE.test(b.id || '')) {
+        for (const pre of ['photo', 'thumb', 'display']) for (const k of await store.list(`${pre}/${b.id}/`)) keys.add(k.key);
+        keys.add('batch/' + b.id);
+      }
+      for (const it of Array.isArray(b.items) ? b.items.slice(0, 200) : []) {
+        const n = parseInt(it && it.n, 10);
+        if (!(it && ID_RE.test(it.id || '')) || !(n >= 0 && n < MAX_FILES)) continue;
+        for (const pre of ['photo', 'thumb', 'display']) keys.add(`${pre}/${it.id}/${n}`);
+      }
+      if (!keys.size) return json({ error: 'nothing to delete' }, 400);
+      await Promise.all([...keys].map((k) => store.del(k)));
+      return json({ ok: true, removed: keys.size });
     }
   }
   return json({ error: 'not found' }, 404);
 }
 
 async function summary(store) {
-  const [arrivals, batches, photos, thumbs] = await Promise.all([store.list('arrive/'), store.list('batch/'), store.list('photo/'), store.list('thumb/')]);
+  const [arrivals, batches, photos, thumbs, displays] = await Promise.all([store.list('arrive/'), store.list('batch/'), store.list('photo/'), store.list('thumb/'), store.list('display/')]);
   const thumbSet = new Set(thumbs.map((t) => t.key.slice(6)));
+  const displaySet = new Set(displays.map((t) => t.key.slice(8)));
   const byBatch = new Map();
   for (const f of photos) {
     const [, id, n] = f.key.split('/');
     if (!byBatch.has(id)) byBatch.set(id, []);
-    byBatch.get(id).push({ n: +n, name: f.meta.name || '', ct: f.meta.ct || '', size: Number(f.meta.size) || f.size || 0, thumb: thumbSet.has(`${id}/${n}`) });
+    byBatch.get(id).push({ n: +n, name: f.meta.name || '', ct: f.meta.ct || '', size: Number(f.meta.size) || f.size || 0, at: Number(f.meta.at) || 0, thumb: thumbSet.has(`${id}/${n}`), display: displaySet.has(`${id}/${n}`) });
   }
   const feed = [];
   for (const b of batches) {
@@ -237,7 +253,8 @@ async function summary(store) {
   }
   for (const a of arrivals) feed.push({ kind: 'arrival', i: +a.key.slice(7), name: a.meta.name || '', t: a.meta.t || '', at: +a.meta.at || 0 });
   feed.sort((a, b) => b.at - a.at);
-  return { seats: arrivals.length, photos: photos.length, bytes: photos.reduce((s, f) => s + (Number(f.meta.size) || f.size || 0), 0), feed, at: Date.now() };
+  const senders = new Set(batches.filter((b) => (byBatch.get(b.key.slice(6)) || []).length).map((b) => (b.meta.i && b.meta.i !== 'null') ? 'i' + b.meta.i : 'n' + (b.meta.name || '').toLowerCase()));
+  return { seats: arrivals.length, photos: photos.length, guests: senders.size, bytes: photos.reduce((s, f) => s + (Number(f.meta.size) || f.size || 0), 0), feed, at: Date.now() };
 }
 
 // ---------- zip of all originals (store-only, streamed) ----------

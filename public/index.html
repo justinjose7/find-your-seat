@@ -159,35 +159,62 @@ svg text.lbl{font-family:var(--ui);font-size:22px;letter-spacing:.18em;text-tran
 .sheet .ghost{height:52px;border:1px solid var(--hair-4);border-radius:16px;font-size:16px;color:var(--ink);width:100%;flex:none}
 .sheet .cta{flex:none}
 
-/* 5 · couple's view */
+/* 5 · couple's photo library */
 #s5{background:var(--cream)}
-#s5 .c-hdr{padding:34px 26px 0;display:flex;flex-direction:column;gap:8px}
-#s5 h1{font-family:var(--display);font-weight:400;font-size:32px;line-height:1.1;color:var(--ink)}
-.stats{display:flex;gap:12px;padding:22px 26px 0}
-.stat{flex:1;background:#fff;border-radius:18px;padding:14px 16px;box-shadow:0 3px 12px rgba(47,46,92,.05)}
-.stat .fig{font-family:var(--display);font-size:32px;line-height:1.1;color:var(--ink);font-variant-numeric:lining-nums;font-feature-settings:'lnum' 1}
-.stat .fig.gold{color:var(--gold)}
-.stat .cap{font-size:13px;color:var(--muted-light);margin-top:2px}
-.feedwrap{padding:26px 26px 0;display:flex;flex-direction:column;gap:12px}
-.frow{display:flex;align-items:center;gap:14px;padding:9px 0;text-align:left;width:100%;border-bottom:1px solid var(--hair)}
-.frow:last-child{border-bottom:0}
-.frow .th{width:58px;height:58px;border-radius:16px;background:var(--sand-deep) center/cover no-repeat;flex:none;display:flex;align-items:center;justify-content:center;color:var(--gold);font-size:22px}
-.frow .th.arr{background:var(--sand);width:58px;height:58px}
-.frow .th.arr i{width:12px;height:12px;border-radius:50%;background:var(--gold);display:block}
-.frow .tx{flex:1;min-width:0}
-.frow .nm{font-size:16px;color:var(--ink)}
-.frow .q{font-family:var(--display);font-style:italic;font-size:17px;color:var(--muted);line-height:1.3;margin-top:2px}
-.frow .sub{font-size:14px;color:var(--muted-light);margin-top:2px}
-.frow .when{font-size:12px;color:var(--ph);flex:none;align-self:flex-start;padding-top:4px}
-.fempty{font-size:15px;line-height:1.55;color:var(--muted);padding:6px 0 20px}
-#s5 .bottom .close{height:54px;border:1px solid var(--hair-4);border-radius:18px;font-size:16px;color:var(--ink);width:100%}
-#s5 .bottom .close[disabled]{opacity:.4}
-.gal{display:flex;flex-direction:column;gap:14px;overflow:auto;min-height:0;-webkit-overflow-scrolling:touch}
-.gal img,.gal video{width:100%;border-radius:16px;display:block;background:var(--sand-deep);min-height:120px}
-.gal .fr{display:flex;flex-direction:column;gap:6px}
-.gal .fr a{font-size:14px;color:var(--gold);text-decoration:none;align-self:flex-end;padding:6px 0}
-.gal .q{font-family:var(--display);font-style:italic;font-size:19px;color:var(--muted);line-height:1.3}
-.gal .danger{font-size:14px;color:#9d3f3f;padding:12px;text-align:center}
+#s5.on{height:100dvh;max-height:100dvh;overflow:hidden}
+.lh{padding:20px 20px 14px;display:flex;flex-direction:column;gap:3px;flex:none}
+.lh .row{display:flex;justify-content:space-between;align-items:baseline}
+.lh .acts{display:flex;align-items:center;gap:14px}
+.lh .sel{font-size:15px;color:var(--gold);padding:6px 0;min-height:44px;display:flex;align-items:center}
+.pillbtn{border-radius:999px;padding:6px 14px;font-size:14px;background:var(--ink);color:var(--cream);min-height:32px}
+.pillbtn[disabled]{opacity:.4}
+.lh h1{font-family:var(--display);font-weight:400;font-size:31px;line-height:1.1;color:var(--ink)}
+.lh .sub{font-size:14px;color:var(--muted-light)}
+.chips2{padding:0 20px 12px;display:flex;gap:8px;flex:none}
+.chip2{border-radius:999px;padding:6px 14px;font-size:14px;background:var(--sand);color:var(--muted);min-height:32px}
+.chip2.on{background:var(--ink);color:var(--cream)}
+.lib{flex:1;min-height:0;overflow:auto;-webkit-overflow-scrolling:touch;overscroll-behavior:contain}
+.pgrid{display:grid;grid-template-columns:repeat(4,1fr);gap:2px}
+.pc{aspect-ratio:1;position:relative;background:var(--sand-deep);padding:0;display:block;overflow:hidden}
+.pc:nth-child(4n+2){background:#E7E1D6}.pc:nth-child(4n+3){background:#DCD3C2}.pc:nth-child(4n){background:var(--canvas)}
+.pc img{width:100%;height:100%;object-fit:cover;display:block}
+.pc .nb{position:absolute;left:4px;bottom:4px;width:14px;height:14px;border-radius:4px;background:rgba(47,46,92,.55);color:var(--cream);font-size:9px;line-height:1;display:flex;align-items:center;justify-content:center;font-family:var(--display)}
+.pc .vb{position:absolute;right:4px;top:4px;color:var(--cream);font-size:11px;text-shadow:0 1px 3px rgba(0,0,0,.5)}
+.pc .ck{position:absolute;right:5px;top:5px;width:20px;height:20px;border-radius:50%;border:1.5px solid var(--cream);background:rgba(47,46,92,.35);display:none}
+.selmode .pc .ck{display:block}
+.pc.picked .ck{background:var(--gold);border-color:var(--gold)}
+.pc.picked .ck::after{content:'✓';color:var(--cream);font-size:12px;display:flex;align-items:center;justify-content:center;height:100%}
+.pc.picked img{opacity:.7}
+.more{display:flex;align-items:center;justify-content:center;gap:9px;padding:16px 0;color:var(--ph);font-size:14px}
+.more .spin{width:14px;height:14px;border:1.6px solid var(--gold-light);border-top-color:transparent;border-radius:50%;animation:spin 1s linear infinite}
+@keyframes spin{to{transform:rotate(360deg)}}
+.lempty{padding:40px 28px;text-align:center;font-size:15px;line-height:1.55;color:var(--muted)}
+.selbar{position:fixed;left:50%;transform:translateX(-50%);bottom:calc(16px + env(safe-area-inset-bottom));display:flex;gap:10px;z-index:9}
+.selbar[hidden]{display:none}
+.selbar .b{height:46px;padding:0 18px;border-radius:14px;font-size:15px;background:var(--ink);color:var(--cream);box-shadow:0 10px 30px rgba(47,46,92,.3)}
+.selbar .b.del{background:#9d3f3f}
+.selbar .b[disabled]{opacity:.45}
+
+/* 6 · photo detail */
+.viewer{position:fixed;inset:0;background:#151530;color:var(--cream);display:none;flex-direction:column;z-index:12;padding-top:env(safe-area-inset-top)}
+.viewer.on{display:flex}
+.viewer .nav{padding:16px 20px 0;display:flex;justify-content:space-between;align-items:center;flex:none}
+.viewer .back{font-size:15px;color:var(--gold-light);padding:8px 8px 8px 0;min-height:44px;display:flex;align-items:center}
+.viewer .pos{font-size:15px;opacity:.6}
+.viewer .ph{flex:1;min-height:0;display:flex;align-items:center;justify-content:center;padding:14px 0;touch-action:pan-y}
+.viewer .ph img,.viewer .ph video{width:100%;height:100%;object-fit:contain;display:block}
+.viewer .strip{padding:0 20px;display:flex;gap:3px;justify-content:center;flex:none;height:34px}
+.viewer .strip div{width:26px;height:34px;opacity:.45;background:var(--sand-deep) center/cover no-repeat}
+.viewer .strip div.cur{width:34px;opacity:1;border:2px solid var(--gold-light);box-sizing:border-box}
+.viewer .card{margin-top:14px;flex:none;background:var(--cream);color:var(--ink);padding:18px 22px calc(22px + env(safe-area-inset-bottom));display:flex;flex-direction:column;gap:11px}
+.viewer .who{display:flex;align-items:center;gap:12px}
+.viewer .av{width:42px;height:42px;border-radius:50%;background:var(--sand-deep);flex:none;display:flex;align-items:center;justify-content:center;font-family:var(--display);font-size:19px;color:var(--ink)}
+.viewer .nm{font-size:16px;color:var(--ink);line-height:1.35}
+.viewer .meta{font-size:14px;color:var(--muted-light);line-height:1.35}
+.viewer .note{font-family:var(--display);font-style:italic;font-size:21px;line-height:1.35;color:var(--ink)}
+.viewer .acts{display:flex;gap:10px;padding-top:2px}
+.viewer .save{flex:1;height:46px;border-radius:14px;background:var(--ink);color:var(--cream);display:flex;align-items:center;justify-content:center;font-size:15px;text-decoration:none}
+.viewer .fav{width:46px;height:46px;border-radius:14px;border:1px solid var(--hair-4);font-size:16px;color:var(--gold);display:flex;align-items:center;justify-content:center}
 
 </style>
 </head>
@@ -246,16 +273,16 @@ svg text.lbl{font-family:var(--ui);font-size:22px;letter-spacing:.18em;text-tran
 </section>
 
 <section class="screen" id="s5">
-  <div class="c-hdr"><div class="eyebrow">For the couple</div><h1>Your day, so far</h1></div>
-  <div class="stats">
-    <div class="stat"><div class="fig" id="cSeats">–</div><div class="cap">seats found</div></div>
-    <div class="stat"><div class="fig gold" id="cPhotos">–</div><div class="cap">photos sent to you</div></div>
+  <div class="lh">
+    <div class="row">
+      <div class="eyebrow">For the couple</div>
+      <div class="acts"><button class="sel" id="cSel" type="button">Select</button><button class="pillbtn" id="cDl" type="button" disabled>Save all</button></div>
+    </div>
+    <h1>Photos from your day</h1>
+    <div class="sub" id="cSub">Loading…</div>
   </div>
-  <div class="feedwrap"><div class="label">Just arrived</div><div id="feed"><div class="fempty">Loading…</div></div></div>
-  <div class="bottom">
-    <button class="close" id="cDl" type="button" disabled>Download all</button>
-    <div class="help" id="cNote">Refreshes every half minute</div>
-  </div>
+  <div class="chips2"><button class="chip2 on" id="fAll" type="button">All</button><button class="chip2" id="fNotes" type="button">With notes</button></div>
+  <div class="lib" id="lib"><div class="pgrid" id="pgrid2"></div><div class="more" id="more" hidden><div class="spin"></div>Loading more</div><div class="lempty" id="lempty" hidden></div></div>
 </section>
 
 
@@ -297,13 +324,17 @@ svg text.lbl{font-family:var(--ui);font-size:22px;letter-spacing:.18em;text-tran
 </div>
 <input type="file" id="pfile" accept="image/*,video/*" multiple hidden>
 
-<div class="sheet" id="gsheet" aria-hidden="true">
-  <div class="panel">
-    <div class="handle"></div>
-    <h2 id="gtitle"></h2>
-    <div class="gal" id="gal"></div>
-    <button class="close" id="gclose" type="button">Done</button>
+<div class="viewer" id="s6" aria-hidden="true">
+  <div class="nav"><button class="back" id="vBack" type="button">‹ Photos</button><div class="pos" id="vPos"></div></div>
+  <div class="ph" id="vPh"></div>
+  <div class="strip" id="vStrip"></div>
+  <div class="card">
+    <div class="who"><div class="av" id="vAv"></div><div><div class="nm" id="vNm"></div><div class="meta" id="vMeta"></div></div></div>
+    <div class="note" id="vNote" hidden></div>
+    <div class="acts"><a class="save" id="vSave" href="#" download>Save to camera roll</a><button class="fav" id="vFav" type="button" aria-label="Favourite">♡</button></div>
   </div>
+</div>
+<div class="selbar" id="selbar" hidden><button class="b" id="selCancel" type="button">Cancel</button><button class="b del" id="selDel" type="button" disabled>Delete</button></div>
 </div>
 
 <button class="toast" id="utoast" type="button"></button>
@@ -506,7 +537,7 @@ function dragClose(el, scroller) {
   p.addEventListener('touchend', e => { const s = scroller ? p.querySelector(scroller) : null; if (y != null && e.changedTouches[0].clientY - y > 80 && (!s || s.scrollTop === 0)) closeS(el); y = null; }, {passive: true});
   el.addEventListener('click', e => { if (e.target === el) closeS(el); });
 }
-dragClose(PS, '.stage:not([hidden])'); dragClose($('#gsheet'), '.gal');
+dragClose(PS, '.stage:not([hidden])');
 
 function openPhotos() {
   const stage2 = !!up;
@@ -523,20 +554,39 @@ $('#pdone').addEventListener('click', () => closeS(PS));
 $('#pmore').addEventListener('click', () => { up = null; pfiles = []; $('#pnote').value = ''; openPhotos(); });
 $('#pfile').addEventListener('change', e => { addFiles(e.target.files); e.target.value = ''; });
 
-async function makeThumb(file, px) {
-  if (!(/^image\//.test(file.type) || /\.(heic|heif)$/i.test(file.name))) return null;
-  let bmp = null;
-  try { bmp = await createImageBitmap(file, {imageOrientation: 'from-image'}); } catch (e) {}
-  if (!bmp) {
-    bmp = await new Promise(res => { const im = new Image(); const u = URL.createObjectURL(file); im.onload = () => { URL.revokeObjectURL(u); res(im); }; im.onerror = () => { URL.revokeObjectURL(u); res(null); }; im.src = u; });
-    if (!bmp) return null;
-  }
+// Image pipeline (on the guest's phone): thumb ~300px for the grid, display ~1600px for the
+// viewer, and the upload itself downscaled to ~2500px JPEG so venue wifi copes. WebP when the
+// browser can encode it, JPEG otherwise. Videos and undecodable files go up as they are.
+const isImage = f => /^image\//.test(f.type) || /\.(heic|heif|jpe?g|png|webp)$/i.test(f.name);
+async function decode(file) {
+  if (!isImage(file)) return null;
+  try { return await createImageBitmap(file, {imageOrientation: 'from-image'}); } catch (e) {}
+  return new Promise(res => { const im = new Image(); const u = URL.createObjectURL(file); const done = v => { clearTimeout(tm); URL.revokeObjectURL(u); res(v); }; const tm = setTimeout(() => done(null), 20000); im.onload = () => done(im); im.onerror = () => done(null); im.src = u; });
+}
+let webpOK = null;
+function scaleTo(bmp, px, type, q) {
   const w = bmp.width || bmp.naturalWidth, h = bmp.height || bmp.naturalHeight;
   const s = Math.min(1, px / Math.max(w, h));
   const c = document.createElement('canvas'); c.width = Math.max(1, Math.round(w * s)); c.height = Math.max(1, Math.round(h * s));
   c.getContext('2d').drawImage(bmp, 0, 0, c.width, c.height);
+  return new Promise(res => c.toBlob(b => res(b && b.type === type ? b : null), type, q));
+}
+async function variant(bmp, px, q) {
+  if (webpOK !== false) { const b = await scaleTo(bmp, px, 'image/webp', q); if (b) { webpOK = true; return b; } webpOK = false; }
+  return scaleTo(bmp, px, 'image/jpeg', q);
+}
+async function makeThumb(file, px) {
+  const bmp = await decode(file); if (!bmp) return null;
+  const b = await variant(bmp, px, .8); if (bmp.close) bmp.close(); return b;
+}
+async function prepare(it) {   // fills it.display and it.upload once; reused on retry
+  if (it.upload) return;
+  const bmp = await decode(it.file);
+  if (!bmp) { it.upload = it.file; return; }
+  it.display = await variant(bmp, 1600, .82);
+  const up = await scaleTo(bmp, 2500, 'image/jpeg', .88);
   if (bmp.close) bmp.close();
-  return new Promise(res => c.toBlob(res, 'image/jpeg', .82));
+  it.upload = up && up.size < it.file.size ? new File([up], (it.file.name || 'photo').replace(/\.[^.]+$/, '') + '.jpg', {type: 'image/jpeg'}) : it.file;
 }
 function addFiles(list) {
   let tooBig = 0;
@@ -545,7 +595,7 @@ function addFiles(list) {
     if (file.size > MAX_MB * 1048576) { tooBig++; continue; }
     const it = {file, url: null, thumb: null, sel: true};
     pfiles.push(it);
-    makeThumb(file, 720).then(b => { if (b) { it.thumb = b; it.url = URL.createObjectURL(b); renderGrid(); } }).catch(() => {});
+    makeThumb(file, 300).then(b => { if (b) { it.thumb = b; it.url = URL.createObjectURL(b); renderGrid(); } }).catch(() => {});
   }
   showErr(tooBig ? (tooBig === 1 ? 'One file was over ' + MAX_MB + ' MB and was skipped.' : tooBig + ' files were over ' + MAX_MB + ' MB and were skipped.') : '');
   renderGrid();
@@ -626,9 +676,13 @@ function pump() {
   if (!next) { if (!active) finishUp(); return; }
   uploadOne(next); pump();
 }
-function uploadOne(it) {
+async function uploadOne(it) {
   it.status = 'uploading'; it.pct = 0; it.err = ''; renderUploads();
-  const fd = new FormData(); fd.append('file', it.file, it.file.name || 'photo.jpg'); if (it.thumb) fd.append('thumb', it.thumb, 'thumb.jpg');
+  try { await prepare(it); } catch (e) { it.upload = it.file; }
+  const ext = t => t === 'image/webp' ? 'webp' : 'jpg';
+  const fd = new FormData(); fd.append('file', it.upload, it.upload.name || 'photo.jpg');
+  if (it.thumb) fd.append('thumb', it.thumb, 'thumb.' + ext(it.thumb.type));
+  if (it.display) fd.append('display', it.display, 'display.' + ext(it.display.type));
   const x = new XMLHttpRequest();
   x.open('POST', '/api/photo/' + up.id + '/' + it.n); x.timeout = 180000;
   x.upload.onprogress = e => { if (e.lengthComputable) { it.pct = e.loaded / e.total; renderUploads(); } };
@@ -683,74 +737,124 @@ function onArrive(g) {
   try { fetch('/api/arrive', {method: 'POST', keepalive: true, headers: {'content-type': 'application/json'}, body: JSON.stringify({i: g.i, name: g.name, t: String(g.t)})}).catch(() => {}); } catch (e) {}
 }
 
-// ---------- couple's view (screen 5) ----------
+// ---------- couple's photo library (screens 5 + 6) ----------
 (function coupleInit() {
   const m = /[#&]couple(?:=([^&]*))?/.exec(location.hash); if (!m) return;
   const token = m[1] ? decodeURIComponent(m[1]) : LS.get(KEY_TOKEN); if (!token) return;
   LS.set(KEY_TOKEN, token); window.coupleMode = token;
   const H = {authorization: 'Bearer ' + token};
   const q = (path) => path + (path.includes('?') ? '&' : '?') + 'token=' + encodeURIComponent(token);
-  let data = null;
-  const when = ms => { const d = Date.now() - ms; if (d < 60e3) return 'just now'; if (d < 3600e3) return Math.round(d / 60e3) + ' min ago'; return new Date(ms).toLocaleTimeString([], {hour: 'numeric', minute: '2-digit'}); };
+  const KEY_FAV = 'sf-fav', PAGE = 48;
   const tlabel = t => t === 'S' ? 'Sweetheart table' : (t ? 'Table ' + t : '');
+  const clock = ms => new Date(ms).toLocaleTimeString([], {hour: 'numeric', minute: '2-digit'}).toLowerCase();
+  const initials = n => n.split(/\s+/).filter(Boolean).slice(0, 2).map(w => w[0].toUpperCase()).join('') || '♥';
+  const fileUrl = (kind, p) => q('/api/admin/file/' + kind + '/' + p.id + '/' + p.n);
+  let all = [], list = [], shown = 0, filter = 'all', selecting = false, picked = new Set(), cur = -1, bad = false;
+
+  // ----- data -----
   async function load() {
     try {
       const r = await fetch('/api/admin/summary', {headers: H, cache: 'no-store'});
-      if (r.status === 401) { $('#feed').innerHTML = '<div class="fempty">This link isn\'t right — ask for a fresh one.</div>'; return; }
+      if (r.status === 401) { bad = true; $('#cSub').textContent = 'This link isn\'t right — ask for a fresh one.'; $('#lempty').textContent = 'Nothing to show without the right link.'; $('#lempty').hidden = false; return; }
       if (!r.ok) throw new Error(((await r.json().catch(() => ({}))).error) || 'HTTP ' + r.status);
-      data = await r.json(); render();
-    } catch (e) { $('#cNote').textContent = "Couldn't refresh: " + e.message; }
+      const d = await r.json();
+      const flat = [];
+      d.feed.filter(b => b.kind === 'photos').forEach(b => b.files.forEach(f => flat.push({
+        id: b.id, n: f.n, key: b.id + '/' + f.n, name: b.name, t: b.t, note: b.note || '', at: f.at || b.at, ct: f.ct, size: f.size, fname: f.name, thumb: f.thumb, display: f.display, video: /^video\//.test(f.ct || '')
+      })));
+      flat.sort((a, b) => b.at - a.at || a.key.localeCompare(b.key));
+      const changed = flat.length !== all.length || flat.some((p, i) => p.key !== all[i].key);
+      all = flat;
+      $('#cSub').textContent = d.photos + (d.photos === 1 ? ' photo · ' : ' photos · ') + d.guests + (d.guests === 1 ? ' guest' : ' guests') + ' · only you can see these';
+      $('#cDl').disabled = !d.photos;
+      if (changed) applyFilter(true);
+    } catch (e) { $('#cSub').textContent = "Couldn't refresh: " + e.message; }
   }
-  function render() {
-    $('#cSeats').textContent = data.seats; $('#cPhotos').textContent = data.photos;
-    const dl = $('#cDl'); dl.disabled = !data.photos; dl.textContent = data.photos ? 'Download all ' + data.photos : 'No photos yet';
-    $('#cNote').textContent = 'Refreshes every half minute · ' + (data.bytes ? (data.bytes / 1048576).toFixed(0) + ' MB so far' : 'nothing stored yet');
-    const f = $('#feed'); f.innerHTML = '';
-    if (!data.feed.length) { f.innerHTML = '<div class="fempty">Nothing yet. The moment a guest finds their seat or sends a photo, it shows up here.</div>'; return; }
-    data.feed.forEach(it => {
-      const row = document.createElement(it.kind === 'photos' ? 'button' : 'div'); row.className = 'frow'; if (it.kind === 'photos') row.type = 'button';
-      row.innerHTML = '<div class="th"></div><div class="tx"><div class="nm"></div><div class="sub"></div></div><div class="when"></div>';
-      row.querySelector('.when').textContent = when(it.at);
-      const nm = row.querySelector('.nm'), sub = row.querySelector('.sub'), th = row.querySelector('.th');
-      nm.textContent = it.name + (it.t ? ' · ' + tlabel(it.t) : '');
-      if (it.kind === 'arrival') { th.className = 'th arr'; th.innerHTML = '<i></i>'; sub.textContent = 'found their seat'; }
-      else {
-        const first = it.files.find(x => x.thumb) || it.files[0];
-        if (first && first.thumb) th.style.backgroundImage = 'url(' + q('/api/admin/file/thumb/' + it.id + '/' + first.n) + ')';
-        else th.textContent = it.files.length ? '▶' : '…';
-        if (it.note) { sub.className = 'q'; sub.textContent = '“' + it.note + '”'; }
-        else sub.textContent = it.files.length === 1 ? '1 photo' : it.files.length + ' photos';
-        if (it.files.length < it.expected) sub.textContent += ' · still arriving';
-        row.onclick = () => openGallery(it);
-      }
-      f.appendChild(row);
+  function applyFilter(keep) {
+    list = filter === 'notes' ? all.filter(p => p.note) : all.slice();
+    shown = keep ? Math.min(list.length, Math.max(shown, PAGE)) : Math.min(list.length, PAGE);
+    renderGrid();
+  }
+
+  // ----- grid (screen 5) -----
+  function renderGrid() {
+    const g = $('#pgrid2'); g.innerHTML = '';
+    const frag = document.createDocumentFragment();
+    list.slice(0, shown).forEach((p, i) => {
+      const c = document.createElement('button'); c.type = 'button'; c.className = 'pc' + (picked.has(p.key) ? ' picked' : ''); c.dataset.i = i;
+      c.setAttribute('aria-label', (p.video ? 'Video' : 'Photo') + ' from ' + p.name);
+      if (p.thumb) { const im = document.createElement('img'); im.loading = 'lazy'; im.decoding = 'async'; im.alt = ''; im.src = fileUrl('thumb', p); c.appendChild(im); }
+      if (p.video) { const v = document.createElement('span'); v.className = 'vb'; v.textContent = '▶'; c.appendChild(v); }
+      if (p.note) { const b = document.createElement('span'); b.className = 'nb'; b.textContent = '”'; c.appendChild(b); }
+      const ck = document.createElement('span'); ck.className = 'ck'; c.appendChild(ck);
+      c.onclick = () => selecting ? togglePick(p, c) : openViewer(i);
+      frag.appendChild(c);
     });
+    g.appendChild(frag);
+    $('#more').hidden = shown >= list.length;
+    const e = $('#lempty');
+    e.hidden = list.length > 0 || bad;
+    e.textContent = filter === 'notes' ? 'No photos with notes yet.' : 'Nothing yet. The moment a guest sends a photo, it appears here.';
   }
-  function openGallery(it) {
-    $('#gtitle').textContent = it.name + (it.t ? ' · ' + tlabel(it.t) : '');
-    const g = $('#gal'); g.innerHTML = '';
-    if (it.note) { const p = document.createElement('div'); p.className = 'q'; p.textContent = '“' + it.note + '”'; g.appendChild(p); }
-    it.files.forEach(fl => {
-      const fr = document.createElement('div'); fr.className = 'fr';
-      const src = q('/api/admin/file/photo/' + it.id + '/' + fl.n);
-      if (/^video\//.test(fl.ct)) { const v = document.createElement('video'); v.controls = true; v.playsInline = true; v.preload = 'metadata'; v.src = src; fr.appendChild(v); }
-      else { const im = document.createElement('img'); im.loading = 'lazy'; im.alt = fl.name; im.src = src; fr.appendChild(im); }
-      const a = document.createElement('a'); a.href = src + '&dl=1'; a.download = fl.name || 'photo'; a.textContent = 'Save · ' + (fl.size / 1048576).toFixed(1) + ' MB'; fr.appendChild(a);
-      g.appendChild(fr);
-    });
-    const del = document.createElement('button'); del.type = 'button'; del.className = 'danger'; del.textContent = 'Delete these ' + (it.files.length === 1 ? 'photo' : it.files.length + ' photos');
-    del.onclick = async () => {
-      if (!confirm('Delete ' + it.name + "'s photos for good?")) return;
-      await fetch('/api/admin/delete', {method: 'POST', headers: {...H, 'content-type': 'application/json'}, body: JSON.stringify({id: it.id})});
-      closeS($('#gsheet')); load();
-    };
-    g.appendChild(del);
-    openS($('#gsheet'));
+  new IntersectionObserver(es => { if (es.some(x => x.isIntersecting) && shown < list.length) { shown = Math.min(list.length, shown + PAGE); renderGrid(); } }, {root: $('#lib'), rootMargin: '300px'}).observe($('#more'));
+  $('#fAll').onclick = () => { filter = 'all'; $('#fAll').classList.add('on'); $('#fNotes').classList.remove('on'); applyFilter(); };
+  $('#fNotes').onclick = () => { filter = 'notes'; $('#fNotes').classList.add('on'); $('#fAll').classList.remove('on'); applyFilter(); };
+  $('#cDl').onclick = () => { location.href = q('/api/admin/download.zip'); };
+
+  // ----- select mode -----
+  function setSelecting(on) {
+    selecting = on; picked.clear();
+    $('#s5').classList.toggle('selmode', on); $('#cSel').textContent = on ? 'Cancel' : 'Select';
+    $('#selbar').hidden = !on; updateSelBar(); if (!on) renderGrid();
   }
-  $('#gclose').addEventListener('click', () => closeS($('#gsheet')));
-  $('#cDl').addEventListener('click', () => { location.href = q('/api/admin/download.zip'); });
+  function togglePick(p, c) { if (picked.has(p.key)) picked.delete(p.key); else picked.add(p.key); c.classList.toggle('picked', picked.has(p.key)); updateSelBar(); }
+  function updateSelBar() { const b = $('#selDel'); b.disabled = !picked.size; b.textContent = picked.size ? 'Delete ' + picked.size : 'Delete'; }
+  $('#cSel').onclick = () => setSelecting(!selecting);
+  $('#selCancel').onclick = () => setSelecting(false);
+  $('#selDel').onclick = async () => {
+    if (!picked.size || !confirm('Delete ' + picked.size + (picked.size === 1 ? ' photo' : ' photos') + ' for good?')) return;
+    const items = [...picked].map(k => { const [id, n] = k.split('/'); return {id, n: +n}; });
+    await fetch('/api/admin/delete', {method: 'POST', headers: {...H, 'content-type': 'application/json'}, body: JSON.stringify({items})}).catch(() => {});
+    setSelecting(false); await load();
+  };
+
+  // ----- viewer (screen 6) -----
+  const V = $('#s6');
+  function openViewer(i) { cur = i; renderViewer(); V.classList.add('on'); V.setAttribute('aria-hidden', 'false'); document.body.style.overflow = 'hidden'; }
+  function closeViewer() { V.classList.remove('on'); V.setAttribute('aria-hidden', 'true'); document.body.style.overflow = ''; $('#vPh').innerHTML = ''; }
+  function renderViewer() {
+    const p = list[cur]; if (!p) return closeViewer();
+    $('#vPos').textContent = (cur + 1) + ' of ' + list.length;
+    const ph = $('#vPh'); ph.innerHTML = '';
+    if (p.video) { const v = document.createElement('video'); v.controls = true; v.playsInline = true; v.preload = 'metadata'; v.src = fileUrl('photo', p); ph.appendChild(v); }
+    else { const im = document.createElement('img'); im.alt = 'Photo from ' + p.name; im.src = fileUrl(p.display ? 'display' : 'photo', p); ph.appendChild(im); }
+    const st = $('#vStrip'); st.innerHTML = '';
+    for (let k = cur - 2; k <= cur + 2; k++) {
+      const d = document.createElement('div'); if (k === cur) d.className = 'cur';
+      const pp = list[k]; if (pp && pp.thumb) d.style.backgroundImage = 'url(' + fileUrl('thumb', pp) + ')'; else if (!pp) d.style.visibility = 'hidden';
+      d.onclick = () => { if (pp) { cur = k; renderViewer(); } };
+      st.appendChild(d);
+    }
+    $('#vAv').textContent = initials(p.name);
+    $('#vNm').textContent = p.name;
+    $('#vMeta').textContent = [tlabel(p.t), 'sent ' + clock(p.at)].filter(Boolean).join(' · ');
+    const n = $('#vNote'); n.hidden = !p.note; n.textContent = p.note ? '“' + p.note + '”' : '';
+    const a = $('#vSave'); a.href = fileUrl('photo', p) + '&dl=1'; a.download = p.fname || 'photo';
+    $('#vFav').textContent = (LS.get(KEY_FAV) || []).includes(p.key) ? '♥' : '♡';
+    [list[cur + 1], list[cur - 1]].forEach(pp => { if (pp && !pp.video) { const im = new Image(); im.src = fileUrl(pp.display ? 'display' : 'photo', pp); } });
+  }
+  $('#vBack').onclick = closeViewer;
+  $('#vFav').onclick = () => { const p = list[cur]; if (!p) return; let f = LS.get(KEY_FAV) || []; f = f.includes(p.key) ? f.filter(k => k !== p.key) : f.concat([p.key]); LS.set(KEY_FAV, f); $('#vFav').textContent = f.includes(p.key) ? '♥' : '♡'; };
+  let sx = null, sy = null;
+  $('#vPh').addEventListener('touchstart', e => { sx = e.touches[0].clientX; sy = e.touches[0].clientY; }, {passive: true});
+  $('#vPh').addEventListener('touchend', e => {
+    if (sx == null) return; const dx = e.changedTouches[0].clientX - sx, dy = e.changedTouches[0].clientY - sy; sx = sy = null;
+    if (Math.abs(dx) > 50 && Math.abs(dx) > Math.abs(dy)) { const k = cur + (dx < 0 ? 1 : -1); if (list[k]) { cur = k; renderViewer(); } }
+  }, {passive: true});
+  document.addEventListener('keydown', e => { if (!V.classList.contains('on')) return; if (e.key === 'Escape') closeViewer(); if (e.key === 'ArrowRight' && list[cur + 1]) { cur++; renderViewer(); } if (e.key === 'ArrowLeft' && list[cur - 1]) { cur--; renderViewer(); } });
+
   show('s5'); load();
-  setInterval(() => { if (!document.hidden) load(); }, 30000);
+  setInterval(() => { if (!document.hidden && !selecting) load(); }, 30000);
   document.addEventListener('visibilitychange', () => { if (!document.hidden) load(); });
 })();
 
