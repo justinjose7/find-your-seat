@@ -19,3 +19,14 @@ id = "b9b29aeb7eea4d22bb62631a845be15e"
 # SHA-256 hex of the couple's private token (the token itself is never stored here).
 # Generate:  python3 -c 'import secrets,hashlib;t=secrets.token_urlsafe(18);print(t, hashlib.sha256(t.encode()).hexdigest())'
 ADMIN_TOKEN_SHA256 = "af5001aa61cc4e5ed59eee4f6156f73f49ac2d1fa1f894b19b1fba7769101d23"
+
+# Turnstile secret. Preview deployments use Cloudflare's public "always passes" test secret
+# (pairs with the test site key baked into the page by default). Production gets the real one via:
+#   npx wrangler pages secret put TURNSTILE_SECRET --project-name find-your-seat
+[env.preview.vars]
+TURNSTILE_SECRET = "1x0000000000000000000000000000000AA"
+
+# Environment sections don't inherit bindings, so the preview needs its own copy.
+[[env.preview.kv_namespaces]]
+binding = "PHOTOS_KV"
+id = "b9b29aeb7eea4d22bb62631a845be15e"

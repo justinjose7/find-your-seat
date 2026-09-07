@@ -143,6 +143,8 @@ svg text.lbl{font-family:var(--ui);font-size:22px;letter-spacing:.18em;text-tran
 .note:focus{border-color:var(--gold)}
 .attr{font-size:14px;color:var(--muted-light);text-align:center;margin-top:-6px}
 .err{font-size:14px;color:#9d3f3f;text-align:center}
+.cft{min-height:0;display:flex;justify-content:center}
+.cft:empty{display:none}
 .ulist{display:flex;flex-direction:column}
 .urow{display:flex;align-items:center;gap:12px;padding:10px 0;border-bottom:1px solid var(--hair)}
 .urow:last-child{border-bottom:0}
@@ -280,6 +282,7 @@ svg text.lbl{font-family:var(--ui);font-size:22px;letter-spacing:.18em;text-tran
       <input class="note" id="pname" placeholder="Your name" autocomplete="name" autocapitalize="words" maxlength="80" hidden>
       <textarea class="note" id="pnote" rows="2" placeholder="Add a few words, if you like" maxlength="280"></textarea>
       <div class="err" id="perr" hidden></div>
+      <div class="cft" id="cft"></div>
       <button class="cta" id="psend" type="button" disabled>Send to Swaroopa &amp; Mathews</button>
       <div class="attr" id="pattr"></div>
     </div>
@@ -490,7 +493,8 @@ $('#sheet .panel').addEventListener('touchend', e => { if (ty != null && e.chang
 
 
 // ---------- photos (screen 4) ----------
-const KEY_TOKEN = 'sf-couple', KEY_ARRIVED = 'sf-arrived', MAX_MB = 25, MAX_FILES = 30;
+const KEY_TOKEN = 'sf-couple', KEY_ARRIVED = 'sf-arrived', MAX_MB = 15, MAX_FILES = 30;
+const TS_KEY = '1x00000000000000000000AA';   // Cloudflare Turnstile site key (public)
 const PS = $('#psheet');
 let pfiles = [];   // {file, url, thumb, sel}
 let up = null;     // {id, items:[{file,thumb,url,n,status,pct,err}], finished}
@@ -511,6 +515,7 @@ function openPhotos() {
   $('#pattr').textContent = selected ? 'From ' + selected.name + ' · ' + tname(selected.t).replace(/^the /, '') : '';
   renderGrid(); if (stage2) renderUploads();
   hideToast(); openS(PS);
+  if (!stage2) loadTurnstile().catch(() => {});
 }
 $('#prompt1').addEventListener('click', openPhotos);
 $('#share3').addEventListener('click', openPhotos);
@@ -566,6 +571,28 @@ function renderGrid() {
   $('#psend').disabled = n === 0;
 }
 
+// Cloudflare Turnstile guards the send button (loaded only when the sheet opens).
+let tsWidget = null, tsToken = null, tsLoading = null;
+function loadTurnstile() {
+  if (tsLoading) return tsLoading;
+  tsLoading = new Promise((res, rej) => {
+    if (window.turnstile) return res();
+    window.__tsReady = res;
+    const sc = document.createElement('script'); sc.src = 'https://challenges.cloudflare.com/turnstile/v0/api.js?render=explicit&onload=__tsReady'; sc.async = true; sc.onerror = () => { tsLoading = null; rej(new Error('load')); };
+    document.head.appendChild(sc);
+  }).then(() => {
+    if (tsWidget != null) return;
+    tsWidget = turnstile.render('#cft', {sitekey: TS_KEY, theme: 'light', size: 'flexible', appearance: 'interaction-only',
+      callback: t => { tsToken = t; }, 'expired-callback': () => { tsToken = null; }, 'timeout-callback': () => { tsToken = null; }, 'error-callback': () => { tsToken = null; }});
+  });
+  return tsLoading;
+}
+function tsReset() { tsToken = null; try { if (tsWidget != null) turnstile.reset(tsWidget); } catch (e) {} }
+async function tsGetToken() {
+  await loadTurnstile();
+  for (let i = 0; i < 40 && !tsToken; i++) { if (i === 20) tsReset(); await new Promise(r => setTimeout(r, 250)); }
+  return tsToken;
+}
 $('#psend').addEventListener('click', send);
 async function send() {
   const items = pfiles.filter(f => f.sel); if (!items.length) return;
@@ -574,12 +601,16 @@ async function send() {
   const btn = $('#psend'); btn.disabled = true; btn.textContent = 'Sending…'; showErr('');
   let id;
   try {
-    const r = await fetch('/api/batch', {method: 'POST', headers: {'content-type': 'application/json'}, body: JSON.stringify({i: selected ? selected.i : null, name, t: selected ? String(selected.t) : '', note, count: items.length})});
+    let cf = null;
+    try { cf = await tsGetToken(); } catch (e) {}
+    if (!cf) throw new Error("The security check didn't load — check your signal and try again.");
+    const r = await fetch('/api/batch', {method: 'POST', headers: {'content-type': 'application/json'}, body: JSON.stringify({i: selected ? selected.i : null, name, t: selected ? String(selected.t) : '', note, count: items.length, cf})});
+    tsReset();   // tokens are single-use
     if (!r.ok) throw new Error((await r.json().catch(() => ({}))).error || 'HTTP ' + r.status);
     id = (await r.json()).id;
   } catch (e) {
     btn.disabled = false; btn.textContent = 'Send to ' + DATA.couple;
-    showErr(/storage/i.test(e.message) ? e.message : "Couldn't reach us just now — check your signal and try again."); return;
+    showErr(/storage|security|expired/i.test(e.message) ? e.message : "Couldn't reach us just now — check your signal and try again."); return;
   }
   up = {id, items: items.map((f, n) => ({file: f.file, thumb: f.thumb, url: f.url, n, status: 'queued', pct: 0, err: ''})), finished: false};
   btn.disabled = false; btn.textContent = 'Send to ' + DATA.couple;

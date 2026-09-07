@@ -7,11 +7,16 @@
 // Storage: R2 bucket `PHOTOS` if bound, otherwise KV namespace `PHOTOS_KV`.
 // Keys:
 //   arrive/<guestIndex>        JSON {i,name,t,at}                 — "seats found"
+//
+// Abuse limits: sends are gated by Cloudflare Turnstile (TURNSTILE_SECRET), a photo
+// is only accepted for an existing batch and index, arrivals are written once per
+// guest, and /api/* is the only path routed to this worker (_routes.json).
 //   batch/<id>                 JSON {id,i,name,t,note,count,at}   — one "send"
 //   photo/<batchId>/<n>        original file  (meta: ct,size,name,at)
 //   thumb/<batchId>/<n>        small JPEG made on the guest's phone (optional)
 
-const MAX_BYTES = 25 * 1024 * 1024;            // KV value limit; R2 could take more
+const MAX_BYTES = 15 * 1024 * 1024;            // per file (KV allows 25 MiB)
+const MAX_GUEST_INDEX = 600;                   // guest list is ~500 rows; bounds arrival writes
 const MAX_FILES = 30;                          // per batch
 const TYPE_OK = /^(image\/(jpeg|jpg|png|heic|heif|webp|gif|avif)|video\/(mp4|quicktime))$/i;
 const EXT_OK = /\.(jpe?g|png|heic|heif|webp|gif|avif|mp4|mov)$/i;
@@ -107,6 +112,19 @@ async function authed(request, env, url) {
   return false;
 }
 
+// Cloudflare Turnstile: the send button hands us a one-time token; verify it here.
+const NOT_CONFIGURED = 'The security check is not set up on this deployment yet.';
+async function verifyTurnstile(env, token, ip) {
+  if (!env.TURNSTILE_SECRET) return NOT_CONFIGURED;
+  if (!token || typeof token !== 'string' || token.length > 2048) return 'Security check missing — please try again.';
+  try {
+    const fd = new FormData(); fd.append('secret', env.TURNSTILE_SECRET); fd.append('response', token); if (ip) fd.append('remoteip', ip);
+    const r = await fetch('https://challenges.cloudflare.com/turnstile/v0/siteverify', { method: 'POST', body: fd });
+    const o = await r.json();
+    return o.success === true ? true : 'Security check failed — please try again.';
+  } catch { return 'Security check unavailable — please try again in a moment.'; }
+}
+
 // ---------- routes ----------
 async function api(request, env, ctx, url) {
   const store = storage(env);
@@ -120,7 +138,8 @@ async function api(request, env, ctx, url) {
   if (p[0] === 'arrive' && m === 'POST') {
     const b = await readJson(request);
     const i = parseInt(b.i, 10);
-    if (!Number.isFinite(i) || i < 0 || i > 5000) return json({ error: 'bad guest' }, 400);
+    if (!Number.isFinite(i) || i < 0 || i > MAX_GUEST_INDEX) return json({ error: 'bad guest' }, 400);
+    if (await store.get('arrive/' + i)) return json({ ok: true, again: true });   // a read, not a write
     const rec = { i, name: clean(b.name, 80), t: clean(b.t, 4), at: Date.now() };
     await store.put('arrive/' + i, JSON.stringify(rec), { ct: 'application/json', kind: 'arrive', name: rec.name, t: rec.t, at: rec.at });
     return json({ ok: true });
@@ -129,6 +148,8 @@ async function api(request, env, ctx, url) {
   // Start a send: returns a batch id the photo uploads attach to.
   if (p[0] === 'batch' && m === 'POST') {
     const b = await readJson(request);
+    const ts = await verifyTurnstile(env, b.cf, request.headers.get('cf-connecting-ip'));
+    if (ts !== true) return json({ error: ts }, ts === NOT_CONFIGURED ? 503 : 403);
     const count = Math.min(MAX_FILES, Math.max(1, parseInt(b.count, 10) || 1));
     const rec = { id: newId(), i: Number.isFinite(+b.i) ? +b.i : null, name: clean(b.name, 80) || 'A guest', t: clean(b.t, 4), note: clean(b.note, 280), count, at: Date.now() };
     await store.put('batch/' + rec.id, JSON.stringify(rec), {
@@ -142,10 +163,14 @@ async function api(request, env, ctx, url) {
   if (p[0] === 'photo' && m === 'POST') {
     const id = p[1] || '', n = parseInt(p[2], 10);
     if (!ID_RE.test(id) || !(n >= 0 && n < MAX_FILES)) return json({ error: 'bad batch or index' }, 400);
+    const batch = await store.get('batch/' + id);
+    if (!batch) return json({ error: 'That send has expired — please start again.' }, 404);
+    if (n >= (Number(batch.meta.count) || MAX_FILES)) return json({ error: 'bad index' }, 400);
+    if (Date.now() - (Number(batch.meta.at) || 0) > 6 * 3600e3) return json({ error: 'That send has expired — please start again.' }, 410);
     const form = await request.formData();
     const file = form.get('file');
     if (!(file && typeof file === 'object' && 'arrayBuffer' in file)) return json({ error: 'no file' }, 400);
-    if (file.size > MAX_BYTES) return json({ error: 'That file is too large (limit 25 MB).' }, 413);
+    if (file.size > MAX_BYTES) return json({ error: 'That file is too large (limit 15 MB).' }, 413);
     const name = clean(file.name, 80) || 'photo';
     const ct = (file.type || '').toLowerCase();
     if (!(TYPE_OK.test(ct) || (!ct && EXT_OK.test(name)))) return json({ error: 'Only photos and short videos, please.' }, 415);
