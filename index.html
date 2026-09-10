@@ -130,13 +130,13 @@ body.ink,body.ink1{background:var(--ink)}
 /* room map sheet */
 .sheet{position:fixed;inset:0;background:rgba(47,46,92,.55);display:flex;align-items:flex-end;justify-content:center;opacity:0;pointer-events:none;transition:opacity .28s ease-out;z-index:10}
 .sheet.on{opacity:1;pointer-events:auto}
-.sheet .panel{width:100%;max-height:92dvh;background:var(--cream);border-radius:32px 32px 0 0;padding:14px 22px calc(22px + env(safe-area-inset-bottom));display:flex;flex-direction:column;gap:14px;transform:translateY(24px);transition:transform .28s ease-out;overflow:hidden}
+.sheet .panel{width:100%;max-height:96dvh;background:var(--cream);border-radius:32px 32px 0 0;padding:14px 22px calc(22px + env(safe-area-inset-bottom));display:flex;flex-direction:column;gap:14px;transform:translateY(24px);transition:transform .28s ease-out;overflow:hidden}
 .sheet.on .panel{transform:none}
 .sheet .handle{width:42px;height:4px;border-radius:2px;background:var(--hair-3);align-self:center}
 .sheet h2{font-family:var(--display);font-weight:400;font-size:30px;line-height:1.15;color:var(--ink)}
 .sheet p{font-size:17px;line-height:1.5;color:var(--body)}
 .sheet .map{flex:1;min-height:0;display:flex;justify-content:center;overflow:auto}
-.sheet svg{height:min(62dvh,760px);width:auto;max-width:100%;display:block}
+.sheet svg{height:min(72dvh,900px);width:auto;max-width:100%;display:block}
 .sheet .close{height:56px;border:1.5px solid var(--hair-5);border-radius:16px;font-size:18px;color:var(--ink);width:100%}
 svg .walls{fill:#fff;stroke:var(--hair-4);stroke-width:2}
 svg .fx{fill:var(--sand-deep);stroke:none}
@@ -149,7 +149,7 @@ svg text.vendor{font-size:24px;fill:var(--label)}
 svg .tb{fill:#fff;stroke:var(--hair-3);stroke-width:2}
 svg .tb.me{fill:var(--gold);stroke:var(--gold)}
 svg .ring{fill:none;stroke:var(--gold);stroke-width:4;opacity:.45}
-svg text{font-family:var(--display);font-size:38px;fill:var(--ink);text-anchor:middle;dominant-baseline:central;font-variant-numeric:lining-nums;font-feature-settings:'lnum' 1}
+svg text{font-family:var(--display);font-size:42px;fill:var(--ink);text-anchor:middle;dominant-baseline:central;font-variant-numeric:lining-nums;font-feature-settings:'lnum' 1}
 svg text.me{fill:var(--cream);font-weight:600}
 svg text.lbl{font-family:var(--ui);font-size:22px;letter-spacing:.18em;text-transform:uppercase;fill:var(--label)}
 
@@ -214,7 +214,6 @@ svg text.lbl{font-family:var(--ui);font-size:22px;letter-spacing:.18em;text-tran
   <div class="panel">
     <div class="handle"></div>
     <h2>The Grand Ballroom</h2>
-    <p id="mapcap"></p>
     <div class="map"><svg id="map" viewBox="-905 170 700 1700" role="img" aria-label="Room map"></svg></div>
     <button class="close" id="closeSheet" type="button">Done</button>
   </div>
@@ -440,7 +439,6 @@ function buildMap() {
 }
 function openSheet() {
   buildMap();
-  $('#mapcap').textContent = selected ? (selected.t === 'S' ? 'The sweetheart table is marked in gold. You come in beside the DJ.' : 'Table ' + selected.t + ' is marked in gold; you come in beside the DJ. ' + T.get(String(selected.t)).long) : '';
   $('#sheet').classList.add('on'); $('#sheet').setAttribute('aria-hidden', 'false'); document.body.style.overflow = 'hidden';
 }
 function closeSheet() { $('#sheet').classList.remove('on'); $('#sheet').setAttribute('aria-hidden', 'true'); document.body.style.overflow = ''; }
